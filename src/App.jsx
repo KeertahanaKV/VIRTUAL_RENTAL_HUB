@@ -6,6 +6,7 @@ import Login from "./components/pages/Login";
 import Privacy from "./components/pages/Privacy";
 import Welcome from "./components/pages/Welcome";
 import AddProperty from "./components/pages/AddProperty";
+import RentersSearch from "./components/pages/RentersSearch"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/" element={<Welcome />} />
           <Route path="/home" element={<Home />} />
           <Route path="/add-property" element={<AddProperty />}/>
+          <Route path="/renters-search" element={<RentersSearch />}/>
           <Route path="/login" element={<Login />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />

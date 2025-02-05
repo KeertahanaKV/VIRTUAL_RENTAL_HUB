@@ -29,9 +29,12 @@ export default function Home() {
           Search for the perfect rental property.
         </p>
         <div className="flex justify-center mt-4">
+          <Link to="/renters-search">
           <button className="mt-4 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition duration-300">
             Search Properties
           </button>
+          </Link>
+          
         </div>
       </div>
     </div>
