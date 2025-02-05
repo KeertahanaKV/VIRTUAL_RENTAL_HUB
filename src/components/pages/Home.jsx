@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Home() {
   return (
     <div className="grid md:grid-cols-2 gap-6  p-15  mt-10">
@@ -10,9 +12,11 @@ export default function Home() {
           List your property and find renters easily.
         </p>
         <div className="flex justify-center mt-4">
-          <button className="mt-4 px-4 py-2  bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-300">
-            Add Property
-          </button>
+          <Link to="/add-property">
+            <button className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-300">
+              Add Property
+            </button>
+          </Link>
         </div>
       </div>
 
