@@ -3,10 +3,10 @@ import { useState } from "react";
 export default function RentersSearch() {
   // State for form inputs
   const [searchQuery, setSearchQuery] = useState("");
-  const [priceRange, setPriceRange] = useState({ min: "", max: ""});
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [propertyType, setPropertyType] = useState("");
   const [availability, setAvailability] = useState("all");
-  
+
   // New state for location filters
   const [country, setCountry] = useState("");
   const [state, setState] = useState("");
@@ -42,7 +42,7 @@ export default function RentersSearch() {
   const handlePriceChange = (e) => setPriceRange({ ...priceRange, [e.target.name]: Number(e.target.value) });
   const handlePropertyTypeChange = (e) => setPropertyType(e.target.value);
   const handleAvailabilityChange = (e) => setAvailability(e.target.value);
-  
+
   // Handle location input changes
   const handleCountryChange = (e) => setCountry(e.target.value);
   const handleStateChange = (e) => setState(e.target.value);
@@ -97,9 +97,7 @@ export default function RentersSearch() {
         </div>
       </div>
 
-      {/* Other Filters and Search Button */}
-      {/* The rest of your existing code (price filters, property type, etc.) */}
-      
+      {/* Price Filters */}
       <div className="mt-4 grid grid-cols-2 gap-4">
         <div>
           <label className="block font-semibold">Min Price</label>
@@ -123,23 +121,27 @@ export default function RentersSearch() {
             className="w-full p-2 border rounded"
           />
         </div>
-        <div>
-          <label className="block font-semibold">Property Type</label>
-          <select value={propertyType} onChange={handlePropertyTypeChange} className="w-full p-2 border rounded">
-            <option value="">All Types</option>
-            <option value="Apartment">Apartment</option>
-            <option value="House">House</option>
-            <option value="Condo">Condo</option>
-          </select>
-        </div>
-        <div>
-          <label className="block font-semibold">Availability</label>
-          <select value={availability} onChange={handleAvailabilityChange} className="w-full p-2 border rounded">
-            <option value="all">All</option>
-            <option value="available">Available</option>
-            <option value="not-available">Not Available</option>
-          </select>
-        </div>
+      </div>
+
+      {/* Property Type Filter */}
+      <div className="mt-4">
+        <label className="block font-semibold">Property Type</label>
+        <select value={propertyType} onChange={handlePropertyTypeChange} className="w-full p-2 border rounded">
+          <option value="">All Types</option>
+          <option value="Apartment">Apartment</option>
+          <option value="House">House</option>
+          <option value="Condo">Condo</option>
+        </select>
+      </div>
+
+      {/* Availability Filter */}
+      <div className="mt-4">
+        <label className="block font-semibold">Availability</label>
+        <select value={availability} onChange={handleAvailabilityChange} className="w-full p-2 border rounded">
+          <option value="all">All</option>
+          <option value="available">Available</option>
+          <option value="not-available">Not Available</option>
+        </select>
       </div>
 
       {/* Search Button */}
