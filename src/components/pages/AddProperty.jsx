@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useProperties } from "../PropertyContext";
 
 export default function AddProperty() {
+  const {addProperty} =useProperties();
   const [formData, setFormData] = useState({
     name: "",
     type: "",
@@ -35,6 +37,7 @@ export default function AddProperty() {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
+      addProperty(formData)
       alert("Property added successfully!");
       setFormData({
         name: "",

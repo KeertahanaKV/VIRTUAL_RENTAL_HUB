@@ -8,10 +8,12 @@ import Welcome from "./components/pages/Welcome";
 import AddProperty from "./components/pages/AddProperty";
 import RentersSearch from "./components/pages/RentersSearch"
 import Favorites from "./components/pages/Favorites";
+import { PropertyProvider } from "./components/PropertyContext";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 export default function App() {
   return (
+    <PropertyProvider>
     <Router>
       <div className="flex flex-col min-h-screen">
       <Header />
@@ -30,5 +32,6 @@ export default function App() {
         </div>
       </div>
     </Router>
+    </PropertyProvider>
   );
 }

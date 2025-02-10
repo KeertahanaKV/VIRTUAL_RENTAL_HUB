@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useProperties } from "../PropertyContext";
 
 export default function RentersSearch() {
   // State for form inputs
+  const {properties}=useProperties();
   const [searchQuery, setSearchQuery] = useState("");
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [propertyType, setPropertyType] = useState("");
@@ -20,57 +22,6 @@ export default function RentersSearch() {
   const [district, setDistrict] = useState("");
   const [area, setArea] = useState("");
 
-  // Mock data for properties
-  const mockProperties = [
-    {
-      id: 1,
-      name: "Cozy Apartment",
-      location: "New York",
-      country: "USA",
-      state: "NY",
-      district: "Manhattan",
-      area: "Downtown",
-      price: 800,
-      type: "Apartment",
-      available: true,
-    },
-    {
-      id: 2,
-      name: "Luxury House",
-      location: "Los Angeles",
-      country: "USA",
-      state: "CA",
-      district: "Hollywood",
-      area: "Sunset Blvd",
-      price: 1500,
-      type: "House",
-      available: false,
-    },
-    {
-      id: 3,
-      name: "Beach Condo",
-      location: "Miami",
-      country: "USA",
-      state: "FL",
-      district: "South Beach",
-      area: "Ocean Drive",
-      price: 1200,
-      type: "Condo",
-      available: true,
-    },
-    {
-      id: 4,
-      name: "City Loft",
-      location: "New York",
-      country: "USA",
-      state: "NY",
-      district: "Brooklyn",
-      area: "Williamsburg",
-      price: 1000,
-      type: "Apartment",
-      available: true,
-    },
-  ];
 
   const toggleFavorite = (propertyId) => {
     let updatedFavorites;
@@ -84,7 +35,7 @@ export default function RentersSearch() {
   };
 
   // Filtered properties based on search query and filters
-  const filteredProperties = mockProperties.filter((property) => {
+  const filteredProperties = properties.filter((property) => {
     const matchesQuery =
       property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
       property.country.toLowerCase().includes(country.toLowerCase()) ||
