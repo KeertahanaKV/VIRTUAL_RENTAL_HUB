@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function RentersSearch() {
   // State for form inputs
@@ -6,6 +7,12 @@ export default function RentersSearch() {
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [propertyType, setPropertyType] = useState("");
   const [availability, setAvailability] = useState("all");
+  const [favorites, setFavorites] = useState([]);
+
+  useEffect(() => {
+    const savedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    setFavorites(savedFavorites);
+  }, []);
 
   // New state for location filters
   const [country, setCountry] = useState("");
@@ -15,11 +22,66 @@ export default function RentersSearch() {
 
   // Mock data for properties
   const mockProperties = [
-    { id: 1, name: "Cozy Apartment", location: "New York", country: "USA", state: "NY", district: "Manhattan", area: "Downtown", price: 800, type: "Apartment", available: true },
-    { id: 2, name: "Luxury House", location: "Los Angeles", country: "USA", state: "CA", district: "Hollywood", area: "Sunset Blvd", price: 1500, type: "House", available: false },
-    { id: 3, name: "Beach Condo", location: "Miami", country: "USA", state: "FL", district: "South Beach", area: "Ocean Drive", price: 1200, type: "Condo", available: true },
-    { id: 4, name: "City Loft", location: "New York", country: "USA", state: "NY", district: "Brooklyn", area: "Williamsburg", price: 1000, type: "Apartment", available: true },
+    {
+      id: 1,
+      name: "Cozy Apartment",
+      location: "New York",
+      country: "USA",
+      state: "NY",
+      district: "Manhattan",
+      area: "Downtown",
+      price: 800,
+      type: "Apartment",
+      available: true,
+    },
+    {
+      id: 2,
+      name: "Luxury House",
+      location: "Los Angeles",
+      country: "USA",
+      state: "CA",
+      district: "Hollywood",
+      area: "Sunset Blvd",
+      price: 1500,
+      type: "House",
+      available: false,
+    },
+    {
+      id: 3,
+      name: "Beach Condo",
+      location: "Miami",
+      country: "USA",
+      state: "FL",
+      district: "South Beach",
+      area: "Ocean Drive",
+      price: 1200,
+      type: "Condo",
+      available: true,
+    },
+    {
+      id: 4,
+      name: "City Loft",
+      location: "New York",
+      country: "USA",
+      state: "NY",
+      district: "Brooklyn",
+      area: "Williamsburg",
+      price: 1000,
+      type: "Apartment",
+      available: true,
+    },
   ];
+
+  const toggleFavorite = (propertyId) => {
+    let updatedFavorites;
+    if (favorites.includes(propertyId)) {
+      updatedFavorites = favorites.filter((id) => id !== propertyId);
+    } else {
+      updatedFavorites = [...favorites, propertyId];
+    }
+    setFavorites(updatedFavorites);
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+  };
 
   // Filtered properties based on search query and filters
   const filteredProperties = mockProperties.filter((property) => {
@@ -30,16 +92,21 @@ export default function RentersSearch() {
       property.district.toLowerCase().includes(district.toLowerCase()) ||
       property.area.toLowerCase().includes(area.toLowerCase());
 
-    const matchesPrice = property.price >= priceRange.min && property.price <= priceRange.max;
+    const matchesPrice =
+      property.price >= priceRange.min && property.price <= priceRange.max;
     const matchesType = propertyType ? property.type === propertyType : true;
-    const matchesAvailability = availability === "all" || (availability === "available" && property.available) || (availability === "not-available" && !property.available);
+    const matchesAvailability =
+      availability === "all" ||
+      (availability === "available" && property.available) ||
+      (availability === "not-available" && !property.available);
 
     return matchesQuery && matchesPrice && matchesType && matchesAvailability;
   });
 
   // Handle form changes
-  const handleSearchQueryChange = (e) => setSearchQuery(e.target.value);
-  const handlePriceChange = (e) => setPriceRange({ ...priceRange, [e.target.name]: Number(e.target.value) });
+  //const handleSearchQueryChange = (e) => setSearchQuery(e.target.value);
+  const handlePriceChange = (e) =>
+    setPriceRange({ ...priceRange, [e.target.name]: Number(e.target.value) });
   const handlePropertyTypeChange = (e) => setPropertyType(e.target.value);
   const handleAvailabilityChange = (e) => setAvailability(e.target.value);
 
@@ -51,7 +118,9 @@ export default function RentersSearch() {
 
   return (
     <div className="max-w-lg mx-auto p-6 bg-gray-100 shadow-md rounded-lg mt-10">
-      <h2 className="text-2xl font-bold text-center text-gray-800">Search Properties</h2>
+      <h2 className="text-2xl font-bold text-center text-gray-800">
+        Search Properties
+      </h2>
 
       {/* Location Filters */}
       <div className="mt-4 grid grid-cols-2 gap-4">
@@ -126,7 +195,11 @@ export default function RentersSearch() {
       {/* Property Type Filter */}
       <div className="mt-4">
         <label className="block font-semibold">Property Type</label>
-        <select value={propertyType} onChange={handlePropertyTypeChange} className="w-full p-2 border rounded">
+        <select
+          value={propertyType}
+          onChange={handlePropertyTypeChange}
+          className="w-full p-2 border rounded"
+        >
           <option value="">All Types</option>
           <option value="Apartment">Apartment</option>
           <option value="House">House</option>
@@ -137,7 +210,11 @@ export default function RentersSearch() {
       {/* Availability Filter */}
       <div className="mt-4">
         <label className="block font-semibold">Availability</label>
-        <select value={availability} onChange={handleAvailabilityChange} className="w-full p-2 border rounded">
+        <select
+          value={availability}
+          onChange={handleAvailabilityChange}
+          className="w-full p-2 border rounded"
+        >
           <option value="all">All</option>
           <option value="available">Available</option>
           <option value="not-available">Not Available</option>
@@ -146,9 +223,7 @@ export default function RentersSearch() {
 
       {/* Search Button */}
       <div className="mt-4">
-        <button
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
-        >
+        <button className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
           Search
         </button>
       </div>
@@ -160,19 +235,32 @@ export default function RentersSearch() {
           {filteredProperties.length > 0 ? (
             filteredProperties.map((property) => (
               <li key={property.id} className="mb-4 p-4 border rounded shadow-md">
-                <h4 className="font-bold text-gray-800">{property.name}</h4>
-                <p className="text-gray-600">{property.location}</p>
-                <p className="text-gray-600">${property.price}</p>
-                <p className="text-gray-600">{property.type}</p>
-                <p className={property.available ? "text-green-500" : "text-red-500"}>
-                  {property.available ? "Available" : "Not Available"}
-                </p>
+                <div>
+                  <h4 className="font-bold text-gray-800">{property.name}</h4>
+                  <p className="text-gray-600">{property.location}</p>
+                  <p className="text-gray-600">${property.price}</p>
+                  <p className="text-gray-600">{property.type}</p>
+                  <p  className={  property.available ? "text-green-500" : "text-red-500"}>
+                                 {property.available ? "Available" : "Not Available"}
+                  </p>
+                </div>
+                <button
+                  onClick={() => toggleFavorite(property.id)}
+                  className="text-xl"
+                >
+                  {favorites.includes(property.id) ? "❤️" : "♡"}
+                </button>
               </li>
             ))
           ) : (
             <p>No properties found.</p>
           )}
         </ul>
+      </div>
+      <div className="mt-6 text-center">
+        <Link to="/favorites" className="text-blue-600 hover:underline">
+          View Favorite Properties
+        </Link>
       </div>
     </div>
   );
