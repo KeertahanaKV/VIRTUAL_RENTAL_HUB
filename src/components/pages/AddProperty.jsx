@@ -2,12 +2,15 @@ import { useState } from "react";
 import { useProperties } from "../PropertyContext";
 
 export default function AddProperty() {
-  const {addProperty} =useProperties();
+  const { addProperty } = useProperties();
   const [formData, setFormData] = useState({
     name: "",
     type: "",
     price: "",
-    location: "",
+    country: "",
+    state: "",
+    district: "",
+    area: "",
     description: "",
     photos: "",
     contact: "",
@@ -26,10 +29,12 @@ export default function AddProperty() {
     let newErrors = {};
 
     if (!formData.name) newErrors.name = "Property name is required";
-    if (!formData.type) newErrors.type = "Property type is required";
+    if (!formData.country) newErrors.country = "Country name is required";
+    if (!formData.state) newErrors.state = "State name is required";
+    if (!formData.district) newErrors.district = "District name is required";
+    if (!formData.area) newErrors.area = "Area name is required";
     if (!formData.price || isNaN(formData.price))
       newErrors.price = "Valid price is required";
-    if (!formData.location) newErrors.location = "Location is required";
     if (!formData.description)
       newErrors.description = "Description is required";
     if (!formData.contact) newErrors.contact = "Contact info is required";
@@ -37,13 +42,21 @@ export default function AddProperty() {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      addProperty(formData)
+      const newProperty = {
+        ...formData,
+        id: Date.now().toString(), // Generate unique ID
+      };
+      addProperty(newProperty);
       alert("Property added successfully!");
       setFormData({
+
         name: "",
         type: "",
         price: "",
-        location: "",
+        country: "",
+        state: "",
+        district: "",
+        area: "",
         description: "",
         photos: "",
         contact: "",
@@ -58,17 +71,30 @@ export default function AddProperty() {
         Add Property
       </h2>
       <form onSubmit={handleSubmit} className="mt-6">
-        <div className="mb-4">
-          <label className="block font-semibold">Property Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-          {errors.name && <p className="text-red-500">{errors.name}</p>}
-        </div>
+        {[
+          { label: "Property Name", name: "name" },
+          { label: "Country", name: "country" },
+          { label: "State", name: "state" },
+          { label: "District", name: "district" },
+          { label: "Area", name: "area" },
+          { label: "Price", name: "price" },
+          { label: "Photos (URL)", name: "photos" },
+          { label: "Contact Info", name: "contact" },
+        ].map((field) => (
+          <div className="mb-4" key={field.name}>
+            <label className="block font-semibold">{field.label}</label>
+            <input
+              type="text"
+              name={field.name}
+              value={formData[field.name]}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            />
+            {errors[field.name] && (
+              <p className="text-red-500">{errors[field.name]}</p>
+            )}
+          </div>
+        ))}
 
         <div className="mb-4">
           <label className="block font-semibold">Type</label>
@@ -87,30 +113,6 @@ export default function AddProperty() {
         </div>
 
         <div className="mb-4">
-          <label className="block font-semibold">Price</label>
-          <input
-            type="text"
-            name="price"
-            value={formData.price}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-          {errors.price && <p className="text-red-500">{errors.price}</p>}
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-semibold">Location</label>
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-          {errors.location && <p className="text-red-500">{errors.location}</p>}
-        </div>
-
-        <div className="mb-4">
           <label className="block font-semibold">Description</label>
           <textarea
             name="description"
@@ -121,29 +123,6 @@ export default function AddProperty() {
           {errors.description && (
             <p className="text-red-500">{errors.description}</p>
           )}
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-semibold">Photos (URL)</label>
-          <input
-            type="text"
-            name="photos"
-            value={formData.photos}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-semibold">Contact Info</label>
-          <input
-            type="text"
-            name="contact"
-            value={formData.contact}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-          {errors.contact && <p className="text-red-500">{errors.contact}</p>}
         </div>
 
         <button

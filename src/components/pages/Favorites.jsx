@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useProperties } from "../PropertyContext"; // Adjust according to your context file
 
 export default function Favorites() {
+  const { properties } = useProperties(); // Fetch real properties
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
@@ -9,14 +11,10 @@ export default function Favorites() {
     setFavorites(savedFavorites);
   }, []);
 
-  const mockProperties = [
-    { id: 1, name: "Cozy Apartment", location: "New York", price: 800, type: "Apartment" },
-    { id: 2, name: "Luxury House", location: "Los Angeles", price: 1500, type: "House" },
-    { id: 3, name: "Beach Condo", location: "Miami", price: 1200, type: "Condo" },
-    { id: 4, name: "City Loft", location: "New York", price: 1000, type: "Apartment" },
-  ];
-
-  const favoriteProperties = mockProperties.filter((property) => favorites.includes(property.id));
+  // Filter properties based on favorites list
+  const favoriteProperties = properties.filter((property) =>
+    favorites.includes(property.id)
+  );
 
   const toggleFavorite = (propertyId) => {
     let updatedFavorites;

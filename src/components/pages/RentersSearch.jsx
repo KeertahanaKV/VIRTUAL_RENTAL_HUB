@@ -3,18 +3,12 @@ import { Link } from "react-router-dom";
 import { useProperties } from "../PropertyContext";
 
 export default function RentersSearch() {
-  // State for form inputs
-  const {properties}=useProperties();
-  const [searchQuery, setSearchQuery] = useState("");
+  const { properties } = useProperties();
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [propertyType, setPropertyType] = useState("");
   const [availability, setAvailability] = useState("all");
   const [favorites, setFavorites] = useState([]);
-
-  useEffect(() => {
-    const savedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    setFavorites(savedFavorites);
-  }, []);
+  const [filteredProperties, setFilteredProperties] = useState(properties);
 
   // New state for location filters
   const [country, setCountry] = useState("");
@@ -22,50 +16,56 @@ export default function RentersSearch() {
   const [district, setDistrict] = useState("");
   const [area, setArea] = useState("");
 
+  useEffect(() => {
+    const savedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    setFavorites(savedFavorites);
+  }, []);
+
+  //  UseEffect to filter properties dynamically
+  useEffect(() => {
+    const filtered = properties.filter((property) => {
+      const matchesQuery =
+        (!country || property.country.toLowerCase().includes(country.toLowerCase())) &&
+        (!state || property.state.toLowerCase().includes(state.toLowerCase())) &&
+        (!district || property.district.toLowerCase().includes(district.toLowerCase())) &&
+        (!area || property.area.toLowerCase().includes(area.toLowerCase()));
+
+      const matchesPrice =
+        (!priceRange.min || property.price >= priceRange.min) &&
+        (!priceRange.max || property.price <= priceRange.max);
+
+      const matchesType = !propertyType || property.type === propertyType;
+
+      const matchesAvailability =
+        availability === "all" ||
+        (availability === "available" && property.available) ||
+        (availability === "not-available" && !property.available);
+
+      return matchesQuery && matchesPrice && matchesType && matchesAvailability;
+    });
+
+    setFilteredProperties(filtered);
+  }, [country, state, district, area, priceRange, propertyType, availability, properties]); // Dependencies ensure it updates on changes
 
   const toggleFavorite = (propertyId) => {
+    const idString = propertyId.toString(); 
+  
     let updatedFavorites;
-    if (favorites.includes(propertyId)) {
-      updatedFavorites = favorites.filter((id) => id !== propertyId);
+    if (favorites.includes(idString)) {
+      updatedFavorites = favorites.filter((id) => id !== idString);
     } else {
-      updatedFavorites = [...favorites, propertyId];
+      updatedFavorites = [...favorites, idString];
     }
+  
     setFavorites(updatedFavorites);
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
+  
 
-  // Filtered properties based on search query and filters
-  const filteredProperties = properties.filter((property) => {
-    const matchesQuery =
-      property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      property.country.toLowerCase().includes(country.toLowerCase()) ||
-      property.state.toLowerCase().includes(state.toLowerCase()) ||
-      property.district.toLowerCase().includes(district.toLowerCase()) ||
-      property.area.toLowerCase().includes(area.toLowerCase());
-
-    const matchesPrice =
-      property.price >= priceRange.min && property.price <= priceRange.max;
-    const matchesType = propertyType ? property.type === propertyType : true;
-    const matchesAvailability =
-      availability === "all" ||
-      (availability === "available" && property.available) ||
-      (availability === "not-available" && !property.available);
-
-    return matchesQuery && matchesPrice && matchesType && matchesAvailability;
-  });
-
-  // Handle form changes
-  //const handleSearchQueryChange = (e) => setSearchQuery(e.target.value);
+  // Handle form input changes
+  const handleInputChange = (setter) => (e) => setter(e.target.value);
   const handlePriceChange = (e) =>
     setPriceRange({ ...priceRange, [e.target.name]: Number(e.target.value) });
-  const handlePropertyTypeChange = (e) => setPropertyType(e.target.value);
-  const handleAvailabilityChange = (e) => setAvailability(e.target.value);
-
-  // Handle location input changes
-  const handleCountryChange = (e) => setCountry(e.target.value);
-  const handleStateChange = (e) => setState(e.target.value);
-  const handleDistrictChange = (e) => setDistrict(e.target.value);
-  const handleAreaChange = (e) => setArea(e.target.value);
 
   return (
     <div className="max-w-lg mx-auto p-6 bg-gray-100 shadow-md rounded-lg mt-10">
@@ -80,7 +80,7 @@ export default function RentersSearch() {
           <input
             type="text"
             value={country}
-            onChange={handleCountryChange}
+            onChange={handleInputChange(setCountry)}
             placeholder="Enter country"
             className="w-full p-2 border rounded"
           />
@@ -90,7 +90,7 @@ export default function RentersSearch() {
           <input
             type="text"
             value={state}
-            onChange={handleStateChange}
+            onChange={handleInputChange(setState)}
             placeholder="Enter state"
             className="w-full p-2 border rounded"
           />
@@ -100,7 +100,7 @@ export default function RentersSearch() {
           <input
             type="text"
             value={district}
-            onChange={handleDistrictChange}
+            onChange={handleInputChange(setDistrict)}
             placeholder="Enter district"
             className="w-full p-2 border rounded"
           />
@@ -110,7 +110,7 @@ export default function RentersSearch() {
           <input
             type="text"
             value={area}
-            onChange={handleAreaChange}
+            onChange={handleInputChange(setArea)}
             placeholder="Enter area"
             className="w-full p-2 border rounded"
           />
@@ -135,9 +135,9 @@ export default function RentersSearch() {
           <input
             type="number"
             name="max"
-            placeholder="100000"
             value={priceRange.max}
             onChange={handlePriceChange}
+            placeholder="100000"
             className="w-full p-2 border rounded"
           />
         </div>
@@ -148,7 +148,7 @@ export default function RentersSearch() {
         <label className="block font-semibold">Property Type</label>
         <select
           value={propertyType}
-          onChange={handlePropertyTypeChange}
+          onChange={handleInputChange(setPropertyType)}
           className="w-full p-2 border rounded"
         >
           <option value="">All Types</option>
@@ -163,20 +163,13 @@ export default function RentersSearch() {
         <label className="block font-semibold">Availability</label>
         <select
           value={availability}
-          onChange={handleAvailabilityChange}
+          onChange={handleInputChange(setAvailability)}
           className="w-full p-2 border rounded"
         >
           <option value="all">All</option>
           <option value="available">Available</option>
           <option value="not-available">Not Available</option>
         </select>
-      </div>
-
-      {/* Search Button */}
-      <div className="mt-4">
-        <button className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
-          Search
-        </button>
       </div>
 
       {/* Display Results */}
@@ -191,14 +184,11 @@ export default function RentersSearch() {
                   <p className="text-gray-600">{property.location}</p>
                   <p className="text-gray-600">${property.price}</p>
                   <p className="text-gray-600">{property.type}</p>
-                  <p  className={  property.available ? "text-green-500" : "text-red-500"}>
-                                 {property.available ? "Available" : "Not Available"}
+                  <p className={property.available ? "text-green-500" : "text-red-500"}>
+                    {property.available ? "Available" : "Not Available"}
                   </p>
                 </div>
-                <button
-                  onClick={() => toggleFavorite(property.id)}
-                  className="text-xl"
-                >
+                <button onClick={() => toggleFavorite(property.id)} className="text-xl">
                   {favorites.includes(property.id) ? "❤️" : "♡"}
                 </button>
               </li>
