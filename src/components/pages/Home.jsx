@@ -17,6 +17,7 @@ export default function Home() {
               Add Property
             </button>
           </Link>
+          
         </div>
       </div>
 

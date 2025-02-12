@@ -1,3 +1,6 @@
+import { PropertyProvider } from "./components/PropertyContext";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import About from "./components/pages/About";
 import Contact from "./components/pages/Contact";
@@ -6,32 +9,53 @@ import Login from "./components/pages/Login";
 import Privacy from "./components/pages/Privacy";
 import Welcome from "./components/pages/Welcome";
 import AddProperty from "./components/pages/AddProperty";
-import RentersSearch from "./components/pages/RentersSearch"
+import RentersSearch from "./components/pages/RentersSearch";
 import Favorites from "./components/pages/Favorites";
-import { PropertyProvider } from "./components/PropertyContext";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import OwnerSidebar from "./components/OwnerSidebar/OwnerSidebar";
+import RenterSidebar from "./components/RenterSidebar/RenterSidebar";
 
+function Layout({ children }) {
+  const location = useLocation();
+
+  const isHomePage = location.pathname === "/" || location.pathname === "/home";
+  const isOwnerPage = ["/add-property"].includes(location.pathname);
+  const isRenterPage = ["/renters-search", "/favorites"].includes(
+    location.pathname
+  );
+
+  return (
+    <div className="flex min-h-screen">
+      {/* ❌ Hide sidebar on Home page */}
+      {!isHomePage && isOwnerPage && <OwnerSidebar />}
+      {!isHomePage && isRenterPage && <RenterSidebar />}
+
+      <div className="flex-1 p-6">{children}</div>
+    </div>
+  );
+}
 export default function App() {
   return (
     <PropertyProvider>
-    <Router>
-      <div className="flex flex-col min-h-screen">
-      <Header />
-      <div className="container mx-auto p-4">
-        <Routes>
-          <Route path="/" element={<Welcome />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/add-property" element={<AddProperty />}/>
-          <Route path="/renters-search" element={<RentersSearch />}/>
-          <Route path="/favorites" element={<Favorites/>}/>
-          <Route path="/login" element={<Login />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/privacy" element={<Privacy />} />
-        </Routes>
+      <Router>
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          <Layout>
+            <div className="container mx-auto p-4">
+              <Routes>
+                <Route path="/" element={<Welcome />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/add-property" element={<AddProperty />} />
+                <Route path="/renters-search" element={<RentersSearch />} />
+                <Route path="/favorites" element={<Favorites />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/privacy" element={<Privacy />} />
+              </Routes>
+            </div>
+          </Layout>
         </div>
-      </div>
-    </Router>
+      </Router>
     </PropertyProvider>
   );
 }

@@ -70,6 +70,7 @@ export default function AddProperty() {
       <h2 className="text-2xl font-bold text-center text-gray-800">
         Add Property
       </h2>
+      
       <form onSubmit={handleSubmit} className="mt-6">
         {[
           { label: "Property Name", name: "name" },
