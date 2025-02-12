@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function RenterSidebar() {
   return (
-    <div className="w-64 bg-blue-800 text-white min-h-screen p-4">
+    <div className="w-64 bg-gray-800 text-white min-h-screen p-4">
       <h2 className="text-xl font-bold mb-4">🏡 Renter Panel</h2>
       <ul>
         <li className="mb-2">
