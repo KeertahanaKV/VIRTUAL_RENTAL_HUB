@@ -14,6 +14,7 @@ export default function AddProperty() {
     description: "",
     photos: "",
     contact: "",
+    availability: "", // New availability field
   });
 
   const [errors, setErrors] = useState({});
@@ -38,18 +39,19 @@ export default function AddProperty() {
     if (!formData.description)
       newErrors.description = "Description is required";
     if (!formData.contact) newErrors.contact = "Contact info is required";
+    if (!formData.availability)
+      newErrors.availability = "Please select availability"; // New validation
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
       const newProperty = {
         ...formData,
-        id: Date.now().toString(), // Generate unique ID
+        id: Date.now().toString(),
       };
       addProperty(newProperty);
       alert("Property added successfully!");
       setFormData({
-
         name: "",
         type: "",
         price: "",
@@ -60,6 +62,7 @@ export default function AddProperty() {
         description: "",
         photos: "",
         contact: "",
+        availability: "", // Reset availability
       });
       setErrors({});
     }
@@ -70,7 +73,7 @@ export default function AddProperty() {
       <h2 className="text-2xl font-bold text-center text-gray-800">
         Add Property
       </h2>
-      
+
       <form onSubmit={handleSubmit} className="mt-6">
         {[
           { label: "Property Name", name: "name" },
@@ -123,6 +126,24 @@ export default function AddProperty() {
           ></textarea>
           {errors.description && (
             <p className="text-red-500">{errors.description}</p>
+          )}
+        </div>
+
+        {/* New Availability Dropdown */}
+        <div className="mb-4">
+          <label className="block font-semibold">Availability</label>
+          <select
+            name="availability"
+            value={formData.availability}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+          >
+            <option value="">Select Availability</option>
+            <option value="Available">Available</option>
+            <option value="Unavailable">Unavailable</option>
+          </select>
+          {errors.availability && (
+            <p className="text-red-500">{errors.availability}</p>
           )}
         </div>
 
