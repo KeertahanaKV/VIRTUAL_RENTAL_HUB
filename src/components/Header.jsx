@@ -4,11 +4,15 @@ export default function Header() {
   return (
     <header className="bg-gray-700 text-white p-6 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-4xl font-bold">VIRTUAL RENTAL HUB</h1>
+        <h1 className="text-4xl font-bold">
+         <a href="/home"> VIRTUAL RENTAL HUB</a>
+        </h1>
         <nav>
           <ul className="flex space-x-4">
             <li>
-              <Link to="/home" className="hover:text-blue-400 p-2">Home</Link>
+              <Link to="/home" className="hover:text-blue-400 p-2">
+                Home
+              </Link>
             </li>
             <li>
               <Link to="/login" className="hover:text-blue-400 p-2">

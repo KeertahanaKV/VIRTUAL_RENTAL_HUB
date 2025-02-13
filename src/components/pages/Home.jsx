@@ -13,7 +13,7 @@ export default function Home() {
         </p>
         <div className="flex justify-center mt-4">
           <Link to="/add-property">
-            <button className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-300">
+            <button className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-300 cursor-pointer">
               Add Property
             </button>
           </Link>
@@ -31,7 +31,7 @@ export default function Home() {
         </p>
         <div className="flex justify-center mt-4">
           <Link to="/renters-search">
-          <button className="mt-4 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition duration-300">
+          <button className="mt-4 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition duration-300 cursor-pointer">
             Search Properties
           </button>
           </Link>
