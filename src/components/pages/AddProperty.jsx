@@ -12,35 +12,44 @@ export default function AddProperty() {
     district: "",
     area: "",
     description: "",
-    photos: "",
+    photos: [],
     contact: "",
-    availability: "", // New availability field
+    availability: "",
   });
 
   const [errors, setErrors] = useState({});
 
-  // Handle input changes
+  // Handle text input
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Validate and submit the form
+  // Handle multiple file uploads
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const imageUrls = files.map((file) => URL.createObjectURL(file)); // Generate preview URLs
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      photos: [...prevFormData.photos, ...imageUrls], // Append new images instead of replacing
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     let newErrors = {};
 
     if (!formData.name) newErrors.name = "Property name is required";
+    if (!formData.type) newErrors.type = "Property type is required";
     if (!formData.country) newErrors.country = "Country name is required";
     if (!formData.state) newErrors.state = "State name is required";
     if (!formData.district) newErrors.district = "District name is required";
     if (!formData.area) newErrors.area = "Area name is required";
-    if (!formData.price || isNaN(formData.price))
-      newErrors.price = "Valid price is required";
-    if (!formData.description)
-      newErrors.description = "Description is required";
+    if (!formData.price || isNaN(formData.price)) newErrors.price = "Valid price is required";
+    if (!formData.description) newErrors.description = "Description is required";
     if (!formData.contact) newErrors.contact = "Contact info is required";
-    if (!formData.availability)
-      newErrors.availability = "Please select availability"; // New validation
+    if (!formData.availability) newErrors.availability = "Please select availability";
+    if (formData.photos.length === 0) newErrors.photos = "Please upload at least one photo";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -51,6 +60,7 @@ export default function AddProperty() {
       };
       addProperty(newProperty);
       alert("Property added successfully!");
+
       setFormData({
         name: "",
         type: "",
@@ -60,9 +70,9 @@ export default function AddProperty() {
         district: "",
         area: "",
         description: "",
-        photos: "",
+        photos: [],
         contact: "",
-        availability: "", // Reset availability
+        availability: "",
       });
       setErrors({});
     }
@@ -70,9 +80,7 @@ export default function AddProperty() {
 
   return (
     <div className="max-w-lg mx-auto p-8 bg-gray-100 shadow-md rounded-lg mt-10">
-      <h2 className="text-2xl font-bold text-center text-gray-800">
-        Add Property
-      </h2>
+      <h2 className="text-2xl font-bold text-center text-gray-800">Add Property</h2>
 
       <form onSubmit={handleSubmit} className="mt-6">
         {[
@@ -82,7 +90,6 @@ export default function AddProperty() {
           { label: "District", name: "district" },
           { label: "Area", name: "area" },
           { label: "Price", name: "price" },
-          { label: "Photos (URL)", name: "photos" },
           { label: "Contact Info", name: "contact" },
         ].map((field) => (
           <div className="mb-4" key={field.name}>
@@ -129,7 +136,6 @@ export default function AddProperty() {
           )}
         </div>
 
-        {/* New Availability Dropdown */}
         <div className="mb-4">
           <label className="block font-semibold">Availability</label>
           <select
@@ -147,10 +153,19 @@ export default function AddProperty() {
           )}
         </div>
 
-        <button
-          type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded mt-4 hover:bg-green-700 transition"
-        >
+        <div className="mb-4">
+          <label className="block font-semibold">Upload Photos</label>
+          <input type="file" multiple onChange={handleFileChange} className="w-full p-2 border rounded" />
+          {errors.photos && <p className="text-red-500">{errors.photos}</p>}
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          {formData.photos.map((photo, index) => (
+            <img key={index} src={photo} alt="Property Preview" className="w-20 h-20 object-cover rounded" />
+          ))}
+        </div>
+
+        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded mt-4 hover:bg-green-700 transition">
           Submit
         </button>
       </form>

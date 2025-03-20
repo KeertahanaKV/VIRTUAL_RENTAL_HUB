@@ -1,19 +1,31 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
-// Create a context to store properties
 const PropertyContext = createContext();
 
-// Create a custom hook to use the PropertyContext
 export const useProperties = () => useContext(PropertyContext);
 
-// Provider component to wrap around your app
 export const PropertyProvider = ({ children }) => {
-   // {children}: This is the content inside the PropertyProvider. It represents any component you wrap inside <PropertyProvider>
   const [properties, setProperties] = useState([]);
 
+  // Load properties from localStorage on mount
+  useEffect(() => {
+    const storedProperties = JSON.parse(localStorage.getItem("properties")) || [];
+    setProperties(storedProperties);
+  }, []);
+
+  // Save properties to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("properties", JSON.stringify(properties));
+  }, [properties]);
+
   const addProperty = (property) => {
-    setProperties([...properties, property]);
+    setProperties((prev) => {
+      const updated = [...prev, property];
+      console.log("Updated properties list:", updated);
+      return updated;
+    });
   };
+
   const updateProperty = (id, updatedProperty) => {
     setProperties((prev) =>
       prev.map((property) => (property.id === id ? updatedProperty : property))
@@ -24,10 +36,8 @@ export const PropertyProvider = ({ children }) => {
     setProperties((prev) => prev.filter((property) => property.id !== id));
   };
 
- // {children}: This is the content inside the PropertyProvider. It represents any component you wrap inside <PropertyProvider>.
-//<PropertyContext.Provider>: This is where you provide the context values (properties and addProperty) to all the components inside it.
   return (
-    <PropertyContext.Provider value={{ properties, addProperty,updateProperty,deleteProperty }}>
+    <PropertyContext.Provider value={{ properties, addProperty, updateProperty, deleteProperty }}>
       {children}
     </PropertyContext.Provider>
   );
